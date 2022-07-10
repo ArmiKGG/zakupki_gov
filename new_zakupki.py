@@ -92,7 +92,8 @@ def reformat_data(source):
 
 def worker(org_num, number):
     org_id = org_num
-    org_num = int(f"organization number: {org_num}000000")
+    org_num = int(f"{org_num}000000")
+    print(f"organization number: {org_num}")
     link = URL_TO_ITEMS.format(org_num + number)
     try:
         sources = reformat_data(parser(link))
