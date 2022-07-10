@@ -58,7 +58,7 @@ def parser(url: AnyStr):
 def reformat_data(source):
     collect = []
     for num, j in enumerate(source["Объекты закупки подробнее"]):
-        if j["Тип объекта закупки"]:
+        if j["Тип объекта закупки"].lower() == "товар":
             nameing = j["Наименование объекта закупки и его характеристики"]
             if "страна происхождения" in nameing.lower():
                 name2 = nameing.lower().split("страна происхождения")[0]
@@ -136,3 +136,8 @@ for ind, org in enumerate(orgs_all):
             count += 1
         if count > 10:
             break
+
+    page = es.scroll(scroll_id=sid, scroll=os.environ['EZA_ML_PAGE_SCROLLING'])  # page scrolling
+    sid = page['_scroll_id']
+    scroll_size = len(page['hits']['hits'])
+    houses_all = page['hits']['hits']
