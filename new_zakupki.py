@@ -92,7 +92,7 @@ def reformat_data(source):
 
 def worker(org_num, number):
     org_id = org_num
-    org_num = int(f"{org_num}000000")
+    org_num = int(f"organization number: {org_num}000000")
     link = URL_TO_ITEMS.format(org_num + number)
     try:
         sources = reformat_data(parser(link))
@@ -102,12 +102,6 @@ def worker(org_num, number):
             logger(f"existence - {existence} - {source['sourceID']}")
             if not existence:
                 source["providerName"] = "provider-zakupki"
-                # resp = requests.post("http://localhost:80/api/v1/products", headers={"Accept": "application/json",
-                #                                                                        "X-API-Key": "9aH5Xnly55"
-                #                                                                                     "PAFnMX3bVKNwHxkV7j60MSWPsDy"
-                #                                                                                     "We7ZHsYx8bZhwu/oshdXibUFbbK",
-                #                                                                        "Content-Type": "application/json"},
-                #                      json=[source])
                 logger(insert_product(es, source))
 
         logger(update_org(es, org_num, number, org_id))
@@ -126,7 +120,19 @@ all_properties = scroll_size
 logger(f"All data {scroll_size}")
 orgs_all = data["hits"]["hits"]
 orgs_all_size = len(orgs_all)
+organs = []
+
 for ind, org in enumerate(orgs_all):
+    organs += orgs_all
+    page = es.scroll(scroll_id=sid, scroll="2h")  # page scrolling
+    sid = page['_scroll_id']
+    scroll_size = len(page['hits']['hits'])
+    orgs_all = page['hits']['hits']
+    if scroll_size == 0:
+        break
+
+
+for ind, org in enumerate(organs):
     org = org["_source"]
     last_value = get_last_value(org)
     count = 0
@@ -136,8 +142,3 @@ for ind, org in enumerate(orgs_all):
             count += 1
         if count > 10:
             break
-
-    page = es.scroll(scroll_id=sid, scroll=os.environ['EZA_ML_PAGE_SCROLLING'])  # page scrolling
-    sid = page['_scroll_id']
-    scroll_size = len(page['hits']['hits'])
-    houses_all = page['hits']['hits']

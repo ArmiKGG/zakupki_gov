@@ -80,5 +80,5 @@ def update_org(es, org_num, number, org_id):
 
 
 def match_all_orgs(es):
-    all_org = es.search(index="zakupki_ids", query={"match_all": {}}, scroll="10h", size=500)
+    all_org = es.search(index="zakupki_ids", query={"match_all": {}}, scroll="10h", size=10000)
     return all_org
