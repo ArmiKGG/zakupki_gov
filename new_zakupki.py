@@ -132,14 +132,14 @@ for ind, org in enumerate(orgs_all):
     if scroll_size == 0:
         break
 
-
-for ind, org in enumerate(organs):
-    org = org["_source"]
-    last_value = get_last_value(org)
-    count = 0
-    for i in range(last_value, 1000):
-        status = worker(org["org_id"], i)
-        if not status:
-            count += 1
-        if count > 10:
-            break
+while True:
+    for ind, org in enumerate(organs):
+        org = org["_source"]
+        last_value = get_last_value(org)
+        count = 0
+        for i in range(last_value, 1000):
+            status = worker(org["org_id"], i)
+            if not status:
+                count += 1
+            if count > 10:
+                break

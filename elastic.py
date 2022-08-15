@@ -6,6 +6,7 @@ import urllib
 import pandas as pd
 load_dotenv()
 
+
 def gen_query(source_id):
     return {
         "bool": {
